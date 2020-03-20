@@ -17,12 +17,11 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
     std::cout << "Invalid estimation or ground_truth data" << std::endl;
     return rmse;
   }
-  vector<double> residual(4,0);  
+  vector<double> residual(4,0);
+  std::cout << estimations[0].size() << " " << ground_truth[0].size() << std::endl;
   for (size_t i=0; i < estimations[0].size(); i++) {
-    for(size_t j = 0; j < estimations.size(); j++){
-        residual[i]  +=  pow((estimations[j](i) - ground_truth[j](i)),2);
-    }
-     residual[i] /= estimations.size();
+     residual[i]  +=  pow((estimations[0](i) - ground_truth[0](i)),2);
+     residual[i] /= 2;
      residual[i] = sqrt(residual[i]);
   }
   rmse << residual[0], residual[1], residual[2],  residual[3];

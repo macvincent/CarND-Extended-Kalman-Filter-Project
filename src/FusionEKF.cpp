@@ -72,9 +72,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
               (pow(dt,3)/2)*noise_ax, 0, pow(dt,2)*noise_ax, 0,
               0, (pow(dt,3)/2)*noise_ay, 0, pow(dt,2)*noise_ay;
   ekf_.Predict();
-  if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
+  if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
     ekf_.Update(measurement_pack.raw_measurements_);
-
   } else {
     double px = measurement_pack.raw_measurements_[0] * cos(measurement_pack.raw_measurements_[1]);
     double py = measurement_pack.raw_measurements_[0] * sin(measurement_pack.raw_measurements_[1]);
@@ -82,8 +81,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     double vy = measurement_pack.raw_measurements_[2] * sin(measurement_pack.raw_measurements_[1]);
     VectorXd cordinate_value (4);
     cordinate_value << px, py, vx, vy;
-    Hj_ = tools.CalculateJacobian(cordinate_value);
-    ekf_.UpdateEKF(cordinate_value);
+    ekf_.Hj_ = tools.CalculateJacobian(cordinate_value);
+    ekf_.UpdateEKF(measurement_pack.raw_measurements_);
   }
 
   // print the output

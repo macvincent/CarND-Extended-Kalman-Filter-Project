@@ -1,5 +1,5 @@
 #include "kalman_filter.h"
-
+#include <iostream>
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
@@ -8,8 +8,19 @@ using Eigen::VectorXd;
  *   VectorXd or MatrixXd objects with zeros upon creation.
  */
 
-KalmanFilter::KalmanFilter() {}
-
+KalmanFilter::KalmanFilter() {
+  P_ = MatrixXd(4, 4);
+  R_ = MatrixXd(2, 2);
+  R_ << 0.0225, 0,
+        0, 0.0225;
+  H_ = MatrixXd(2, 4);
+  F_ = MatrixXd(4, 4);
+  R_radar_ = MatrixXd(3, 3);
+  R_radar_ << 0.09, 0, 0,
+              0, 0.0009, 0,
+              0, 0, 0.09;
+  
+}
 KalmanFilter::~KalmanFilter() {}
 
 void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
