@@ -41,21 +41,21 @@ FusionEKF::~FusionEKF() {}
 void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   if (!is_initialized_) {
     // first measurement
-    cout << "EKF: " << endl;
+    cout << "EKF: " <<  endl;
     ekf_.x_ = VectorXd(4);
-    ekf_.x_ << 1, 1, 1, 1;
+    if(measurement_pack.sensor_type_ == MeasurementPackage::LASER) ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0, 0;
+    else{
+      double px = measurement_pack.raw_measurements_[0] * cos(measurement_pack.raw_measurements_[1]);
+      double py = measurement_pack.raw_measurements_[0] * sin(measurement_pack.raw_measurements_[1]);
+      double vx = measurement_pack.raw_measurements_[2] * cos(measurement_pack.raw_measurements_[1]);
+      double vy = measurement_pack.raw_measurements_[2] * sin(measurement_pack.raw_measurements_[1]);
+      ekf_.x_ << px, py, vx, vy;
+    }
     ekf_.P_ << 1, 0, 0, 0,
-          0, 1, 0, 0,
-          0, 0, 1000, 0,
-          0, 0, 0, 1000;
-    ekf_.R_ << 0.0225, 0,
-          0, 0.0225;
-    ekf_.H_ << 1, 0, 0, 0,
-          0, 1, 0, 0;
-    ekf_.F_ << 1, 0, 1, 0,
-            0, 1, 0, 1,
-            0, 0, 1, 0,
-            0, 0, 0, 1;
+            0, 1, 0, 0,
+            0, 0, 1000, 0,
+            0, 0, 0, 1000;
+
     is_initialized_ = true;
     previous_timestamp_ = measurement_pack.timestamp_;
     return;
@@ -81,11 +81,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     double vy = measurement_pack.raw_measurements_[2] * sin(measurement_pack.raw_measurements_[1]);
     VectorXd cordinate_value (4);
     cordinate_value << px, py, vx, vy;
-    ekf_.Hj_ = tools.CalculateJacobian(cordinate_value);
+    ekf_.Hj_ = tools.CalculateJacobian(ekf_.x_);
     ekf_.UpdateEKF(measurement_pack.raw_measurements_);
   }
 
-  // print the output
-  cout << "x_ = " << ekf_.x_ << endl;
-  cout << "P_ = " << ekf_.P_ << endl;
+  // // print the output
+  // cout << "x_ = " << ekf_.x_ << endl;
+  // cout << endl;
+  // cout << "P_ = " << ekf_.P_ << endl;
 }

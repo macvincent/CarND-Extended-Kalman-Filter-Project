@@ -19,7 +19,13 @@ KalmanFilter::KalmanFilter() {
   R_radar_ << 0.09, 0, 0,
               0, 0.0009, 0,
               0, 0, 0.09;
-  
+  H_ << 1, 0, 0, 0,
+        0, 1, 0, 0;
+
+  F_ << 1, 0, 1, 0,
+        0, 1, 0, 1,
+        0, 0, 1, 0,
+        0, 0, 0, 1;
 }
 KalmanFilter::~KalmanFilter() {}
 
@@ -40,7 +46,7 @@ void KalmanFilter::Predict() {
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
-  VectorXd z_pred = Hj_ * x_;
+  VectorXd z_pred = tools.to_cartesian(x_);
   VectorXd y = z - z_pred;
   MatrixXd Ht = Hj_.transpose();
   MatrixXd S = Hj_ * P_ * Ht + R_radar_;

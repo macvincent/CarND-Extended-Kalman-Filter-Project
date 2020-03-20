@@ -18,10 +18,11 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
     return rmse;
   }
   vector<double> residual(4,0);
-  std::cout << estimations[0].size() << " " << ground_truth[0].size() << std::endl;
   for (size_t i=0; i < estimations[0].size(); i++) {
-     residual[i]  +=  pow((estimations[0](i) - ground_truth[0](i)),2);
-     residual[i] /= 2;
+    for(size_t j = 0; j < estimations.size(); j++){
+        residual[i]  +=  pow((estimations[j](i) - ground_truth[j](i)),2);
+    }
+     residual[i] /= estimations.size();
      residual[i] = sqrt(residual[i]);
   }
   rmse << residual[0], residual[1], residual[2],  residual[3];
@@ -40,7 +41,7 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   float vy = x_state(3);
   float px2 = pow(px, 2), py2 = pow(py, 2), vx2 = pow(vx, 2), vy2 = pow(vy, 2);
   // check division by zero
-  if(abs(py2 + px2) == 0) throw std::runtime_error("Division by zero");
+  if(abs(py2 + px2) == 0) return Hj;
   // TODO: YOUR CODE HERE 
   Hj(0, 0) = px/(pow((px2 + py2),0.5));
   Hj(0, 1) = py/(pow((px2 + py2),0.5));
@@ -51,4 +52,17 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   Hj(2, 2) = px/(pow((px2 + py2),0.5));
   Hj(2, 3) = py/(pow((px2 + py2),0.5));    
   return Hj;
+}
+
+Eigen::VectorXd Tools::to_cartesian(Eigen::VectorXd& polar){
+   VectorXd cart(3);
+   double px = polar(0);
+   double py = polar(1);
+   double vx = polar(2);
+   double vy = polar(3);
+   double px2 = pow(px, 2), py2 = pow(py, 2), vx2 = pow(vx, 2), vy2 = pow(vy, 2);
+   cart << sqrt((px2 + py2)),
+    atan2(py, px),
+    (px*vx + py*vy)/sqrt((px2 + py2));
+   return cart;
 }

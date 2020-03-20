@@ -2,7 +2,7 @@
 #define KALMAN_FILTER_H_
 
 #include "Eigen/Dense"
-
+#include "tools.h"
 class KalmanFilter {
  public:
   /**
@@ -67,6 +67,7 @@ class KalmanFilter {
   Eigen::MatrixXd Hj_;
 
   Eigen::MatrixXd R_radar_;
+  Tools tools;
 };
 
 #endif // KALMAN_FILTER_H_
