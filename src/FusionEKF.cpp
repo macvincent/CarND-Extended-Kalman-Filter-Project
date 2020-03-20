@@ -14,7 +14,6 @@ using std::vector;
  */
 FusionEKF::FusionEKF() {
   is_initialized_ = false;
-
   previous_timestamp_ = 0;
 
   // initializing matrices
@@ -24,38 +23,27 @@ FusionEKF::FusionEKF() {
   Hj_ = MatrixXd(3, 4);
 
   //measurement covariance matrix - laser
-  R_laser_ << 0.0225, 0,
-              0, 0.0225;
+  R_laser_ << 0.01, 0,
+              0, 0.01;
 
   //measurement covariance matrix - radar
-  R_radar_ << 0.09, 0, 0,
+  R_radar_ << 0.01, 0, 0,
               0, 0.0009, 0,
-              0, 0, 0.09;
+              0, 0, 0.01;
+  ekf_.P_ << 1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1000, 0,
+            0, 0, 0, 1000;
 }
 
-/**
- * Destructor.
- */
 FusionEKF::~FusionEKF() {}
 
 void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   if (!is_initialized_) {
-    // first measurement
     cout << "EKF: " <<  endl;
     ekf_.x_ = VectorXd(4);
-    if(measurement_pack.sensor_type_ == MeasurementPackage::LASER) ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0, 0;
-    else{
-      double px = measurement_pack.raw_measurements_[0] * cos(measurement_pack.raw_measurements_[1]);
-      double py = measurement_pack.raw_measurements_[0] * sin(measurement_pack.raw_measurements_[1]);
-      double vx = measurement_pack.raw_measurements_[2] * cos(measurement_pack.raw_measurements_[1]);
-      double vy = measurement_pack.raw_measurements_[2] * sin(measurement_pack.raw_measurements_[1]);
-      ekf_.x_ << px, py, vx, vy;
-    }
-    ekf_.P_ << 1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1000, 0,
-            0, 0, 0, 1000;
-
+    if(measurement_pack.sensor_type_ == MeasurementPackage::LASER) ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 4, 1;
+    else ekf_.x_ = tools.to_polar(measurement_pack);
     is_initialized_ = true;
     previous_timestamp_ = measurement_pack.timestamp_;
     return;
@@ -72,21 +60,11 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
               (pow(dt,3)/2)*noise_ax, 0, pow(dt,2)*noise_ax, 0,
               0, (pow(dt,3)/2)*noise_ay, 0, pow(dt,2)*noise_ay;
   ekf_.Predict();
+  
   if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
     ekf_.Update(measurement_pack.raw_measurements_);
   } else {
-    double px = measurement_pack.raw_measurements_[0] * cos(measurement_pack.raw_measurements_[1]);
-    double py = measurement_pack.raw_measurements_[0] * sin(measurement_pack.raw_measurements_[1]);
-    double vx = measurement_pack.raw_measurements_[2] * cos(measurement_pack.raw_measurements_[1]);
-    double vy = measurement_pack.raw_measurements_[2] * sin(measurement_pack.raw_measurements_[1]);
-    VectorXd cordinate_value (4);
-    cordinate_value << px, py, vx, vy;
     ekf_.Hj_ = tools.CalculateJacobian(ekf_.x_);
     ekf_.UpdateEKF(measurement_pack.raw_measurements_);
   }
-
-  // // print the output
-  // cout << "x_ = " << ekf_.x_ << endl;
-  // cout << endl;
-  // cout << "P_ = " << ekf_.P_ << endl;
 }

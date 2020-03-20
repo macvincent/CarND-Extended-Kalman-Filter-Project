@@ -3,22 +3,17 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-/* 
- * Please note that the Eigen library does not initialize 
- *   VectorXd or MatrixXd objects with zeros upon creation.
- */
-
 KalmanFilter::KalmanFilter() {
   P_ = MatrixXd(4, 4);
   R_ = MatrixXd(2, 2);
-  R_ << 0.0225, 0,
-        0, 0.0225;
+  R_ << 0.01, 0,
+        0, 0.01;
   H_ = MatrixXd(2, 4);
   F_ = MatrixXd(4, 4);
   R_radar_ = MatrixXd(3, 3);
-  R_radar_ << 0.09, 0, 0,
-              0, 0.0009, 0,
-              0, 0, 0.09;
+  R_radar_ << 0.01, 0, 0,
+              0, 0.0001, 0,
+              0, 0, 0.01;
   H_ << 1, 0, 0, 0,
         0, 1, 0, 0;
 
