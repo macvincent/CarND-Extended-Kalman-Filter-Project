@@ -45,7 +45,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   MatrixXd Si = S.inverse();
   MatrixXd PHt = P_ * Ht;
   MatrixXd K = PHt * Si;
-
+  y(1) = remainder(y(1), 2*M_PI);
   //new estimate
   x_ = x_ + (K * y);
   long x_size = x_.size();
