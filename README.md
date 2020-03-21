@@ -13,7 +13,7 @@ The main program can be built and run by doing the following from the project to
 
 After passing the sample sensor data through the Extended Kalman Filter, the result can be simulated by running the `display.py` script from the same directory, using the command:
 
-`python ../src.display.py`
+`python ../src/display.py`
 
 You will get an output similar to this:
 
