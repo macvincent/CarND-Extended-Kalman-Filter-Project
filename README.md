@@ -1,7 +1,7 @@
 # Extended Kalman Filter Project Starter Code
 Self-Driving Car Engineer Nanodegree Program
 
-This project utilizes an extended kalman filter to estimate the state of a moving object with noisy lidar and radar measurements. By passing the radar and ladar readings through the extended kalman filter, an output with a higher degree of certainty and also a lower RMSE value when compared to ground truth values was gotten.
+This project utilizes an Extended Kalman Filter to estimate the state of a moving object with noisy lidar and radar measurements. By passing the radar and ladar readings through the Extended Kalman Filter, an output with a higher degree of certainty and also a lower RMSE value when compared to ground truth values was gotten.
 
 The main program can be built and run by doing the following from the project top directory.
 
