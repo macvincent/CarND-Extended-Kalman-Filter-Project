@@ -5,13 +5,19 @@ This project utilizes an Extended Kalman Filter to estimate the state of a movin
 
 The main program can be built and run by doing the following from the project top directory.
 
-1. mkdir build
-2. cd build
-3. cmake ..
-4. make
-5. ./ExtendedKF
+1. `mkdir build`
+2. `cd build`
+3. `cmake ..`
+4. `make`
+5. `./ExtendedKF`
 
-After passing the sensor data form './data/obj_pose-laser-radar-synthetic-input.txt' through the Extended Kalman Filter, the result can be simulated by running the './src/display.py' file.
+After passing the sample sensor data through the Extended Kalman Filter, the result can be simulated by running the `display.py` script from the same directory, using the command:
+
+`python ../src.display.py`
+
+You will get an output similar to this:
+
+![filter_output](./data/result.png)
 ## Other Important Dependencies
 
 * cmake >= 3.5

@@ -24,13 +24,11 @@ int main() {
   string in_file_name_ = "../data/obj_pose-laser-radar-synthetic-input.txt";
   ifstream in_file(in_file_name_.c_str(), ifstream::in);
   ofstream simulation_data("../data/filter_output.txt");
+  ofstream rmse_data("../data/rmse_data.txt");
 
-  if (!in_file.is_open()) {
-    cout << "Cannot open input file: " << in_file_name_ << endl;
-  }
-  if (!simulation_data.is_open()){
-    cout << "Cannot open input file: test.txt" << endl;
-  }
+  if (!in_file.is_open()) cout << "Cannot open input file: " << in_file_name_ << endl;
+  if (!rmse_data.is_open()) cout << "Cannot open input file: rsme.txt" << endl;
+  if (!simulation_data.is_open()) cout << "Cannot open input file: simulation_data.txt" << endl;
 
   string line;
   while (getline(in_file, line)) {
@@ -86,9 +84,11 @@ int main() {
   }
   VectorXd rmse = tools.CalculateRMSE(estimations,ground_truth);
   cout << "RMSE: " << rmse << endl;
-  if (in_file.is_open()) {
-    in_file.close();
-  }
-  simulation_data.close();
+  rmse_data << rmse;
+  
+  if (in_file.is_open()) in_file.close();
+  if(simulation_data.is_open())simulation_data.close();
+  if(rmse_data.is_open())rmse_data.close();
+
   return 0;
 }
