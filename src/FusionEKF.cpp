@@ -21,7 +21,7 @@ FusionEKF::~FusionEKF() {}
 
 void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   if (!is_initialized_) {
-    cout << "EKF: " <<  endl;
+    cout << "EKF: Position states stored in file '../data/filter_output.txt' in format (px, py)."<< endl;;
     if(measurement_pack.sensor_type_ == MeasurementPackage::LASER) ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 4, 1;
     else ekf_.x_ = tools.to_polar(measurement_pack);
     is_initialized_ = true;
